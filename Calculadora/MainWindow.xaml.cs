@@ -17,8 +17,8 @@ namespace Calculadora
     public partial class MainWindow : Window
     {
 
-        private string currentInput = ""; // Almacena la expresión actual
-        private CalculadoraCore calculadora = new CalculadoraCore(); // Instanciamos la clase Calculadora
+        private string currentInput = "";
+        private CalculadoraCore calculadora = new CalculadoraCore(); 
 
         public MainWindow()
         {
@@ -29,14 +29,13 @@ namespace Calculadora
             var button = sender as Button;
             string buttonContent = button?.Content.ToString();
 
-            // Si el usuario presiona "=" (calcular)
             if (buttonContent == "=")
             {
                 try
                 {
-                    string resultado = calculadora.Evaluar(currentInput); // Llamamos a la clase Calculadora
-                    txtDisplay.Text = resultado; // Mostramos el resultado
-                    currentInput = resultado; // Almacenamos el resultado para futuras operaciones
+                    string resultado = calculadora.Evaluar(currentInput);
+                    txtDisplay.Text = resultado;
+                    currentInput = resultado;
                 }
                 catch (FormatException ex)
                 {
@@ -55,21 +54,19 @@ namespace Calculadora
                 }
                 catch (Exception ex)
                 {
-                    txtDisplay.Text = "Error desconocido: " + ex.Message;
-                    currentInput = ""; // Limpiar la entrada actual
+                    txtDisplay.Text = ex.Message;
+                    currentInput = "";
                 }
             }
-            // Si el usuario presiona "C" (borrar)
             else if (buttonContent == "C")
             {
-                currentInput = ""; // Limpiamos la entrada
-                txtDisplay.Text = "0"; // Reseteamos el display
+                currentInput = "";
+                txtDisplay.Text = "0";
             }
-            // Para cualquier otro botón
             else
             {
-                currentInput += buttonContent; // Agregamos el contenido del botón al input actual
-                txtDisplay.Text = currentInput; // Mostramos el input en el display
+                currentInput += buttonContent;
+                txtDisplay.Text = currentInput;
             }
         }
     }

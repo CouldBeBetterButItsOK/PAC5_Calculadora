@@ -14,47 +14,40 @@ namespace Calculadora
         public string Evaluar(string expresion)
         {
             expresion = expresion.Replace(",", ".");
-            // Validar la expresión antes de procesarla
-            if (!ValidarExpresion(expresion))
+            if (!ValidateExpresion(expresion))
             {
                 throw new FormatException("Syntax Error");
             }
 
             
            
-                // Convertir a notación postfija
-                var postfija = ConvertirAPostfija(expresion);
+                var postfija = ToPost(expresion);
 
-                // Evaluar la notación postfija
-                var resultado = EvaluarPostfija(postfija);
+                var resultado = ResolvePost(postfija);
 
                 return resultado.ToString();
             
         }
 
-        private bool ValidarExpresion(string expresion)
+        private bool ValidateExpresion(string expresion)
         {
-            // Eliminar espacios en blanco
             expresion = expresion.Replace(" ", "");
 
-            // Validar caracteres permitidos
             if (!Regex.IsMatch(expresion, "^[0-9+\\-*/^()√.]+$"))
             {
                 return false;
             }
 
-            // Validar paréntesis balanceados
             int balance = 0;
             foreach (var c in expresion)
             {
                 if (c == '(') balance++;
                 else if (c == ')') balance--;
 
-                if (balance < 0) return false; // Paréntesis cerrados sin abrir
+                if (balance < 0) return false;
             }
-            if (balance != 0) return false; // Paréntesis desbalanceados
+            if (balance != 0) return false;
 
-            // Validar operadores consecutivos o al inicio/final
             if (Regex.IsMatch(expresion, "[+*/^]{2,}") ||
                 Regex.IsMatch(expresion, "^[+*/^]") ||
                 Regex.IsMatch(expresion, "[+\\-*/^]$"))
@@ -65,7 +58,7 @@ namespace Calculadora
             return true;
         }
 
-        private List<string> ConvertirAPostfija(string expresion)
+        private List<string> ToPost(string expresion)
         {
             var salida = new List<string>();
             var operadores = new Stack<char>();
@@ -102,9 +95,9 @@ namespace Calculadora
                     }
                     operadores.Pop();
                 }
-                else if (EsOperador(c))
+                else if (IsOperator(c))
                 {
-                    if (c == '-' && (i == 0 || expresion[i - 1] == '(' || EsOperador(expresion[i - 1])))
+                    if (c == '-' && (i == 0 || expresion[i - 1] == '(' || IsOperator(expresion[i - 1])))
                     {
                         string numeroNegativo = "-";
                         while (i + 1 < expresion.Length && (char.IsDigit(expresion[i + 1]) || expresion[i + 1] == '.'))
@@ -115,7 +108,7 @@ namespace Calculadora
                         continue;
                     }
 
-                    while (operadores.Count > 0 && Prioridad(operadores.Peek()) >= Prioridad(c))
+                    while (operadores.Count > 0 && Priority(operadores.Peek()) >= Priority(c))
                     {
                         salida.Add(operadores.Pop().ToString());
                     }
@@ -131,7 +124,7 @@ namespace Calculadora
             return salida;
         }
 
-        private double EvaluarPostfija(List<string> postfija)
+        private double ResolvePost(List<string> postfija)
         {
             var pila = new Stack<double>();
 
@@ -141,9 +134,9 @@ namespace Calculadora
                 {
                     pila.Push(numero);
                 }
-                else if (EsOperador(token[0]))
+                else if (IsOperator(token[0]))
                 {
-                    if (token[0] == '√') // Raíz cuadrada
+                    if (token[0] == '√')
                     {
                         if (pila.Count < 1) throw new FormatException("Syntax Error");
                         double a = pila.Pop();
@@ -174,16 +167,16 @@ namespace Calculadora
                 '*' => a * b,
                 '/' => a / b,
                 '^' => Math.Pow(a, b),
-                _ => throw new FormatException("Operador desconocido")
+                _ => throw new FormatException("Syntax Error")
             };
         }
 
-        private static bool EsOperador(char c)
+        private static bool IsOperator(char c)
         {
             return "+-*/^√".Contains(c);
         }
 
-        private static int Prioridad(char operador)
+        private static int Priority(char operador)
         {
             return operador switch
             {

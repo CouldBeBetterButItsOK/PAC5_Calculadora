@@ -94,7 +94,7 @@ namespace PAC5_Calculadora.Tests
         [Fact]
         public void Test_08()
         {
-            Assert.Throws<InvalidOperationException>(() => _calculadora.Evaluar("√ -4"));
+            Assert.Throws<FormatException>(() => _calculadora.Evaluar("√ -4"));
             
         }
         [Fact]
