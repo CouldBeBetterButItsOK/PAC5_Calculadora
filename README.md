@@ -36,8 +36,7 @@ Instruccions per fer servir la calculadora:
 ## Exemples d'Ús i Captures de pantalla📸 <a id="exemples-dús-i-captures-de-pantalla"></a>
 
 ### Exemple:
-- **Entrada:** `6-3*2+6/1+294`
-- **Resultat:** `300`
+
 - **Captures de pantalla:**
   
   ![Operacions Consecutives](Calculadora/Imatges/OperacioCalc.png)
